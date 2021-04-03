@@ -101,53 +101,6 @@ namespace BlazorProductList.Data.Service
 
         }
 
-        //public  Task<IEnumerable<Product>> GetList()
-        //{
-        //    Func<int, int, int> c = delegate (int a, int b) {
-        //        Random rdm = new Random();
-        //        return rdm.Next(a, b);
-        //    };
-        //    Func<DateTime, DateTime, DateTime> d = delegate (DateTime a, DateTime b)
-        //        {
-        //            int rang = (b - a).Days;
-        //            Random r = new Random();
-        //            return a.AddDays(r.Next(rang));
-        //        };
-        //    Func<int, int, IEnumerable<string>,string> fe = delegate (int a, int b, IEnumerable<string> c)
-        //        {
-        //            Random rdm = new Random();
-        //            return c.ElementAt(rdm.Next(a, b));
-        //        };
-        //    Func<int, int,Dictionary<int,string>, string> fd = delegate (int a, int b, Dictionary<int, string> c)
-        //    {
-        //        Random rdm = new Random();
-        //        return c[rdm.Next(a, b)];
-        //    };
-        //    for (int i = 0; i < 20; i++)
-        //    {
-
-        //        ProductList.Append(new Product()
-        //        {
-    
-        //        }); ;
-
-        //    }
-        //     return Task.FromResult(Enumerable.Range(1, 20)
-        //        .Select(idx => new Product()
-        //        {
-        //            Id = idx,
-        //            Identifizierer = CreateIdentifizierer(),
-        //            //Status = fe(0,2,StatusList),
-        //            //Completeness = c(1,100),
-        //            //Vorlage=fe(0,2,VorlageList),
-        //            //ChangedAt=d(new DateTime(2021,1,1),DateTime.Now),
-        //            //CreatedAt=d(new DateTime(2021,1,1),DateTime.Now),
-        //            Anbieter = "",
-        //            //Produktname=fd(1,10,ProductNameList),
-        //            BildPath = ""
-        //        }
-        //    ));
-        //}
 
         /// <summary>
         ///     create a random Number bw 1 to 100
