@@ -1,0 +1,91 @@
+﻿@page "/productdetails/{p:int}"
+<h3>@newProduct.Produktname</h3>
+
+@using BlazorProductList.Data.Model
+@using BlazorProductList.Data.Service
+@inject ProductService ps
+<div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card" style="width: 100%;">
+                    <img class="card-img-top" src="@newProduct.BildPath" alt="Card image cap">
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Produkt Name</span>
+                            </div>
+                            <input type="text" class="form-control" 
+                                   aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                   @bind="@newProduct.Produktname">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Identifizierer</span>
+                    </div>
+                    <input type="text" class="form-control"
+                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                           @bind="@newProduct.Status">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Produkt Vollständigkeit</span>
+                    </div>
+                    <input type="text" class="form-control"
+                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                           @bind="@newProduct.Completeness">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Vorlage</span>
+                    </div>
+                    <input type="text" class="form-control"
+                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                           @bind="@newProduct.Vorlage">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Anbieter</span>
+                    </div>
+                    <input type="text" class="form-control"
+                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                           @bind="@newProduct.Anbieter">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Geändert am</span>
+                    </div>
+                    <input type="text" class="form-control"
+                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                           @bind="@newProduct.ChangedAt">
+                </div>                        <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Erstellt am</span>
+                    </div>
+                    <input type="text" class="form-control"
+                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                           @bind="@newProduct.CreatedAt">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+@code {
+    [Parameter]
+    public int p { get; set; }
+
+    public Product newProduct { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+         newProduct = await ps.GetProductDetails(p);
+
+    }
+
+}

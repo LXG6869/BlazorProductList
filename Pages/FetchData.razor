@@ -1,0 +1,126 @@
+﻿@page "/"
+@page "/fetchdata"
+
+@using BlazorProductList.Data
+@using BlazorProductList.Data.Model 
+@using BlazorProductList.Data.Service
+@using System.Web
+@inject WeatherForecastService ForecastService
+@inject ProductService ps 
+@inject NavigationManager navi
+
+<h1>Produkte List</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (ProductList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<div class="row">
+    <div class="col-md-1">
+
+    </div>
+    <div class="col-md-11">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Bild</th>
+                        <th>Identifizierer</th>
+                        <th>Status</th>
+                        <th>Vollständigkeit</th>
+                        <th>Vorlage</th>
+                        <th>Anbieter</th>
+                        <th>Produktname</th>
+                        <th>Geändert am</th>
+                        <th>Erzeugt am</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in ProductList)
+                    {
+                        <tr @ondblclick="()=>dbClickEvent(product)">
+                            <td>
+                                <img src="@product.BildPath" style="width:50px; height:50px;" />
+                            </td>
+                            <td>@product.Identifizierer</td>
+                            <td>
+                                <div class="@setStatusIconCss(product)" style="width:120px;">
+                                    <span class="iconify" data-icon="@setStatusIcon(product)" data-inline="false"></span>@product.Status
+                                </div>
+                           </td>
+                            <td style="text-align:-webkit-center;">
+                                <div class="@changeCssClass(product)" style="text-align:center;width:50px;">
+                                    <span> @product.Completeness</span>
+                                </div> 
+                            </td>
+                            <td>@product.Vorlage</td>
+                            <td>@product.Anbieter</td>
+                            <td>@product.Produktname</td>
+                            <td>@product.ChangedAt.ToShortDateString()</td>
+                            <td>@product.CreatedAt.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        
+    </div>
+</div>  
+}
+
+@code {
+    private WeatherForecast[] forecasts;
+    private IEnumerable<Product> ProductList;
+    public string imagePath;
+    protected override async Task OnInitializedAsync()
+    {
+        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+
+        ProductList = await ps.GetProductList();
+
+        ProductList = ProductList.OrderBy(i => i.Id).Take(10);
+    }
+    public void dbClickEvent(Product p)
+    {
+        string idStr = p.Id.ToString();
+        string naviTo = "productdetails/" + idStr;
+        navi.NavigateTo($"/productdetails/"+p.Id);
+    }
+    public string changeCssClass(Product p)
+    {
+        if (p.Completeness>=90)
+        {
+            return "chip chip-green";
+        }
+        else
+        {
+            return "chip chip-orange";
+        }
+    }
+
+    public string setStatusIconCss(Product p)
+    {
+        if (p.Status.Equals("Deaktiviert"))
+        {
+            return "chip chip-red";
+        }
+        else
+        {
+            return "chip chip-green";
+        }
+    }
+    public string setStatusIcon(Product p)
+    {
+        if (p.Status.Equals("Deaktiviert"))
+        {
+            return "ph:columns-thin";
+        }
+        else
+        {
+            return "bi:bookmark";
+        }
+    }
+}
