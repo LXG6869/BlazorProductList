@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.Extensions.Logging;
+@inherits LayoutComponentBase
+@inject ILogger<MainLayout> logger;
 
 <div class="page">
     <div class="sidebar">
@@ -7,6 +9,29 @@
 
     <div class="main">
         <div class="top-row px-4">
+
+            <div class="notification" >
+                <button type="button" @onclick="GoToEmail" style="border:none;">
+                    <span class="iconify" data-icon="ant-design:mail-outlined" data-height="28" data-inline="false">
+                    </span>
+                    <span class="badge-red badge">2</span>
+                </button>
+
+            </div>
+            <div class="notification">
+                <button type="button" @onclick="GoToInfo" style="border:none;">
+                    <span class="iconify" data-icon="bx:bx-bell" data-height="28" data-inline="false">
+                    </span>  <span class="badge-orange badge">3</span>
+                    </button>
+            </div>
+            <div class="notification">
+                <button type="button" @onclick="GoToRefresh" style="border:none;">
+                    <span class="iconify" data-icon="zmdi:refresh" data-height="28" data-inline="false">
+
+                    </span>  <span class="badge-orange badge">6</span>
+                    </button>
+            </div>
+
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
@@ -15,3 +40,21 @@
         </div>
     </div>
 </div>
+@code{
+
+    public void GoToEmail()
+    {
+        logger.LogInformation("Click icon go to Email View");
+
+    }
+    public void GoToInfo()
+    {
+        logger.LogInformation("Click icon go to Info View");
+
+    }
+    public void GoToRefresh()
+    {
+        logger.LogInformation("Click icon go to Refresh View");
+
+    }
+}

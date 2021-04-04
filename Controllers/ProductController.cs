@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BlazorProductList.Data.Model;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,8 +44,12 @@ namespace BlazorProductList.Controllers
         public void Delete(int id)
         {
         }
-
-
+        //[HttpGet]
+        //public Product GetProductFromCntroller()
+        //{
+        //    Product newP = new Product();
+        //    return newP;
+        //}
        
     }
 }

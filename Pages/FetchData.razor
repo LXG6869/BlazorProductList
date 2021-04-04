@@ -5,13 +5,33 @@
 @using BlazorProductList.Data.Model 
 @using BlazorProductList.Data.Service
 @using System.Web
+@using Microsoft.Extensions.Logging;
+@inject ILogger<FetchData> logger; 
+
 @inject WeatherForecastService ForecastService
 @inject ProductService ps 
 @inject NavigationManager navi
+@*@inject HttpClient Http*@
 
-<h1>Produkte List</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<div class="row">
+    <div class="col-md-2">
+        <h3>Produkte List</h3>
+    </div>
+    <div class="col-md-10" float-right>
+        <div class="row">
+            <div class="col-md-8"></div>
+            <div class="col-md-2">
+          
+                <CustomerSelect @bind-OptionList="ansichtOptionList1"></CustomerSelect>
+            </div>
+            <div class="col-md-2">
+                <CustomerSelect @bind-OptionList="ansichtOptionList2"></CustomerSelect>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @if (ProductList == null)
 {
@@ -20,58 +40,56 @@
 else
 {
 <div class="row">
-    <div class="col-md-1">
-
-    </div>
+    <div class="col-md-1">1</div>
     <div class="col-md-11">
-            <table class="table table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Bild</th>
-                        <th>Identifizierer</th>
-                        <th>Status</th>
-                        <th>Vollständigkeit</th>
-                        <th>Vorlage</th>
-                        <th>Anbieter</th>
-                        <th>Produktname</th>
-                        <th>Geändert am</th>
-                        <th>Erzeugt am</th>
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Bild</th>
+                    <th>Identifizierer</th>
+                    <th>Status</th>
+                    <th>Vollständigkeit</th>
+                    <th>Vorlage</th>
+                    <th>Anbieter</th>
+                    <th>Produktname</th>
+                    <th>Geändert am</th>
+                    <th>Erzeugt am</th>
 
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in ProductList)
+                {
+                    <tr @ondblclick="()=>dbClickEvent(product)">
+                        <td>
+                            <img src="@product.BildPath" style="width:50px; height:50px;" />
+                        </td>
+                        <td>@product.Identifizierer</td>
+                        <td>
+                            <div class="@setStatusIconCss(product)" style="width:120px;">
+                                <span class="iconify" data-icon="@setStatusIcon(product)" data-inline="false"></span>@product.Status
+                            </div>
+                        </td>
+                        <td style="text-align:-webkit-center;">
+                            @{
+                                int completness = product.Completeness < 0 ? 0 : product.Completeness;
+                            }
+                            @*dirct when and switch key words not using functions in html*@
+                            @*<div class="@changeCssClass(product)" style="text-align:center;width:50px;">*@
+                            <div class="@(completness switch { _ when completness>90=>"chip chip-green", _ when completness>50=>"chip chip-orange", _ when completness>0=>"chip chip-red" })" style="text-align:center;width:50px;">
+                                <span> @product.Completeness</span>
+                            </div>
+                        </td>
+                        <td>@product.Vorlage</td>
+                        <td>@product.Anbieter</td>
+                        <td>@product.Produktname</td>
+                        <td>@product.ChangedAt.ToShortDateString()</td>
+                        <td>@product.CreatedAt.ToShortDateString()</td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var product in ProductList)
-                    {
-                        <tr @ondblclick="()=>dbClickEvent(product)">
-                            <td>
-                                <img src="@product.BildPath" style="width:50px; height:50px;" />
-                            </td>
-                            <td>@product.Identifizierer</td>
-                            <td>
-                                <div class="@setStatusIconCss(product)" style="width:120px;">
-                                    <span class="iconify" data-icon="@setStatusIcon(product)" data-inline="false"></span>@product.Status
-                                </div>
-                           </td>
-                            <td style="text-align:-webkit-center;">
-                                @{ 
-                                    int completness = product.Completeness <0?0: product.Completeness;
-                                }
-                                @*dirct when and switch key words not using functions in html*@
-                                @*<div class="@changeCssClass(product)" style="text-align:center;width:50px;">*@
-                                    <div class="@(completness switch { _ when completness>90=>"chip chip-green", _ when completness>50=>"chip chip-orange", _ when completness>0=>"chip chip-red" })" style="text-align:center;width:50px;">
-                                        <span> @product.Completeness</span>
-                                    </div>
-</td>
-                            <td>@product.Vorlage</td>
-                            <td>@product.Anbieter</td>
-                            <td>@product.Produktname</td>
-                            <td>@product.ChangedAt.ToShortDateString()</td>
-                            <td>@product.CreatedAt.ToShortDateString()</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        
+                }
+            </tbody>
+        </table>
+
     </div>
 </div>  
 }
@@ -80,11 +98,31 @@ else
     private WeatherForecast[] forecasts;
     private IEnumerable<Product> ProductList;
     public string imagePath;
+
+    public string Name { get; set; }
+    public List<string> ansichtOptionList1 { get; set; }
+
+    public List<string> ansichtOptionList2 { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        //https://localhost:44388/
         //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        //var result= Http.GetStringAsync("https://localhost:44388/api/product/");
+        ansichtOptionList1 = new List<string>();
+        ansichtOptionList1.Add("StandardAnsicht1");
+        ansichtOptionList1.Add("StandardAnsicht2");
+        ansichtOptionList1.Add("StandardAnsicht3");
+        ansichtOptionList1.Add("StandardAnsicht4");
+        ansichtOptionList2 = new List<string>();
+        ansichtOptionList2.Add("Speed4Trade1");
+        ansichtOptionList2.Add("Speed4Trade2");
+        ansichtOptionList2.Add("Speed4Trade3");
+        ansichtOptionList2.Add("Speed4Trade4");
 
         ProductList = await ps.GetProductList();
+
+
 
         ProductList = ProductList.OrderBy(i => i.Id).Take(10);
     }

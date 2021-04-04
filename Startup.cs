@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
+using System.Net.Http;
+using Microsoft.Extensions.Logging;
+
 namespace BlazorProductList
 {
     public class Startup
@@ -31,15 +34,17 @@ namespace BlazorProductList
             services.AddMvc(options => options.EnableEndpointRouting = false)
                             .SetCompatibilityVersion
                             (Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_3_0);
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<ProductService>();
+            //services.AddSingleton<HttpClient>();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -64,6 +69,7 @@ namespace BlazorProductList
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+
         }
     }
 }
