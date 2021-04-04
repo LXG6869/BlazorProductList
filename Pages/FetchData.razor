@@ -53,10 +53,15 @@ else
                                 </div>
                            </td>
                             <td style="text-align:-webkit-center;">
-                                <div class="@changeCssClass(product)" style="text-align:center;width:50px;">
-                                    <span> @product.Completeness</span>
-                                </div> 
-                            </td>
+                                @{ 
+                                    int completness = product.Completeness <0?0: product.Completeness;
+                                }
+                                @*dirct when and switch key words not using functions in html*@
+                                @*<div class="@changeCssClass(product)" style="text-align:center;width:50px;">*@
+                                    <div class="@(completness switch { _ when completness>90=>"chip chip-green", _ when completness>50=>"chip chip-orange", _ when completness>0=>"chip chip-red" })" style="text-align:center;width:50px;">
+                                        <span> @product.Completeness</span>
+                                    </div>
+</td>
                             <td>@product.Vorlage</td>
                             <td>@product.Anbieter</td>
                             <td>@product.Produktname</td>
