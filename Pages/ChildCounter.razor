@@ -1,0 +1,20 @@
+﻿<h3>ChildCounter</h3>
+
+<div>
+    CurrentCounterValue in ChildCounter is @CurrentCounterValue
+</div>
+<button @onclick="@UpdateCurrentCounterValue">Update</button>
+
+@code {
+    [Parameter]
+    public int CurrentCounterValue { get; set; }
+    [Parameter]
+    public EventCallback<int> CurrentCounterValueChanged { get; set; }
+
+    async Task UpdateCurrentCounterValue()
+    {
+        CurrentCounterValue++;
+        await CurrentCounterValueChanged.InvokeAsync(CurrentCounterValue);
+    }
+
+}

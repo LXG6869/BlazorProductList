@@ -23,9 +23,6 @@ namespace BlazorProductList.Data.Service
         public delegate TResult Func<in T1, in T2, out TResult>(T1 arg1, T2 arg2);
         public delegate TResult Func<in T1, in T2, in T3, out TResult>(T1 arg1, T2 arg2, T3 arg3);
 
-
-        //public delegate T GetStringFromList<T>(IEnumerable<T> input); 
-
         public ProductService()
         {
             StatusList = new List<string>() { "Veröffentlicht", "Deaktiviert" };
@@ -41,7 +38,49 @@ namespace BlazorProductList.Data.Service
             ProductNameList.Add(8, "Trixe Kunstoffpflanzen mit Sandfuß ca 12cm, 6st.");
             ProductNameList.Add(9, "Dechra Denticur Kaustriplets mit Enzymen für kleine Hunde 173g");
             ProductNameList.Add(10, "Feliway Friends Nachfüllflaken 3 x 30 Tage Vorteilspack");
+            CreateRandomList();
+        }
 
+        private void CreateRandomList()
+        {
+            Func<DateTime, DateTime, DateTime> d = delegate (DateTime a, DateTime b)
+            {
+                int rang = (b - a).Days;
+                Random r = new Random();
+                return a.AddDays(r.Next(rang));
+            };
+            Func<int, int, IEnumerable<string>, string> fe = delegate (int a, int b, IEnumerable<string> c)
+            {
+                Random rdm = new Random();
+                return c.ElementAt(rdm.Next(a, b));
+            };
+            Func<int, int, int> c = delegate (int a, int b) {
+                Random rdm = new Random();
+                return rdm.Next(a, b);
+            };
+            Func<int, int, Dictionary<int, string>, string> fd = delegate (int a, int b, Dictionary<int, string> c)
+            {
+                Random rdm = new Random();
+                return c[rdm.Next(a, b)];
+            };
+            ProductList = new List<Product>();
+            for (int i = 0; i < 20; i++)
+            {
+                Product np = new Product()
+                {
+                    Id = i,
+                    Identifizierer = CreateIdentifizierer(),
+                    ChangedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
+                    CreatedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
+                    Completeness = c(1, 100),
+                    Produktname = fd(1, 10, ProductNameList),
+                    Anbieter = "",
+                    BildPath = fe(0, 2, ImagePathList),
+                    Vorlage = fe(0, 2, VorlageList),
+                    Status = fe(0, 2, StatusList)
+                };
+                ProductList = ProductList.Append(np);
+            }
         }
 
         public Task<Product> GetProductDetails(int id)
@@ -73,35 +112,37 @@ namespace BlazorProductList.Data.Service
                 Random rdm = new Random();
                 return c[rdm.Next(a, b)];
             };
-            if (ProductList!=null && ProductList.Count()>0)
-            {
-                return ProductList;
-            }
-            else
-            {
-                ProductList = await Task.FromResult(Enumerable.Range(1, 20)
-    .Select(idx => new Product()
-    {
-        Id = idx,
-        Identifizierer = CreateIdentifizierer(),
-        ChangedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
-        CreatedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
-        Completeness = c(1, 100),
-        Produktname = fd(1, 10, ProductNameList),
-        Anbieter = "",
-        BildPath = fe(0, 2, ImagePathList),
-        Vorlage = fe(0, 2, VorlageList),
-        Status = fe(0, 2, StatusList)
-    }
-));
 
-                return ProductList;
-            }
+            return await Task.FromResult(ProductList);
+
+
+//            if (ProductList!=null && ProductList.Count()>0)
+//            {
+//                return ProductList;
+//            }
+//            else
+//            {
+////                ProductList = await Task.FromResult(Enumerable.Range(1, 1)
+////    .Select(idx => new Product()
+////    {
+////        Id = idx,
+////        Identifizierer = CreateIdentifizierer(),
+////        ChangedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
+////        CreatedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
+////        Completeness = c(1, 100),
+////        Produktname = fd(1, 10, ProductNameList),
+////        Anbieter = "",
+////        BildPath = fe(0, 2, ImagePathList),
+////        Vorlage = fe(0, 2, VorlageList),
+////        Status = fe(0, 2, StatusList)
+////    }
+////));
+
+//                return ProductList;
+//            }
 
 
         }
-
-
         /// <summary>
         ///     create a random Number bw 1 to 100
         /// </summary>
