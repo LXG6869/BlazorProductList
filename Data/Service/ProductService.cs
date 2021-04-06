@@ -168,7 +168,7 @@ namespace BlazorProductList.Data.Service
         ///    random Product indentifizierer
         /// </summary>
         /// <returns> string identifizierer</returns>
-        private string CreateIdentifizierer()
+        public string CreateIdentifizierer()
         {
             string result = "";
             Random rdm = new Random();
