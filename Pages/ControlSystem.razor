@@ -1,7 +1,13 @@
 ﻿@page "/controlsystem"
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage;
 
-<h3>ControlSystem</h3>
+<h3>@CurrentLocation</h3>
 
-@code {
-
+@code{
+    public string CurrentLocation { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentLocation = await _localStorage.GetItemAsync<string>("navi");
+        CurrentLocation = CurrentLocation.ToUpper();
+    }
 }

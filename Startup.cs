@@ -15,6 +15,7 @@ using Serilog;
 using System.Net.Http;
 using Microsoft.Extensions.Logging;
 using BlazorProductList.Data.Model;
+using Blazored.LocalStorage;
 
 namespace BlazorProductList
 {
@@ -40,6 +41,7 @@ namespace BlazorProductList
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<ProductService>();
+            services.AddBlazoredLocalStorage();
             //services.AddSingleton<HttpClient>();
             // install Automapper using typeof()
             // muss  create a object-Profile 

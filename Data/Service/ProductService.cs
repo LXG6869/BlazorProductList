@@ -10,7 +10,7 @@ namespace BlazorProductList.Data.Service
 {
     public class ProductService
     {
-        private static  IEnumerable<Product> ProductList;
+        private static  IEnumerable<Product> ProductList=new List<Product>();
 
         private static readonly Dictionary<int,string> ProductNameList=new Dictionary<int, string>();
 
@@ -64,7 +64,7 @@ namespace BlazorProductList.Data.Service
                 return c[rdm.Next(a, b)];
             };
             ProductList = new List<Product>();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 10899; i++)
             {
                 Product np = new Product()
                 {
@@ -92,56 +92,8 @@ namespace BlazorProductList.Data.Service
 
         public async Task<IEnumerable<Product>> GetProductList()
         {
-            Func<DateTime, DateTime, DateTime> d = delegate (DateTime a, DateTime b)
-            {
-                int rang = (b - a).Days;
-                Random r = new Random();
-                return a.AddDays(r.Next(rang));
-            };
-            Func<int, int, IEnumerable<string>, string> fe = delegate (int a, int b, IEnumerable<string> c)
-            {
-                Random rdm = new Random();
-                return c.ElementAt(rdm.Next(a, b));
-            };
-            Func<int, int, int> c = delegate (int a, int b) {
-                Random rdm = new Random();
-                return rdm.Next(a, b);
-            };
-            Func<int, int, Dictionary<int, string>, string> fd = delegate (int a, int b, Dictionary<int, string> c)
-            {
-                Random rdm = new Random();
-                return c[rdm.Next(a, b)];
-            };
-
+            //Thread.Sleep(5000);
             return await Task.FromResult(ProductList);
-
-
-//            if (ProductList!=null && ProductList.Count()>0)
-//            {
-//                return ProductList;
-//            }
-//            else
-//            {
-////                ProductList = await Task.FromResult(Enumerable.Range(1, 1)
-////    .Select(idx => new Product()
-////    {
-////        Id = idx,
-////        Identifizierer = CreateIdentifizierer(),
-////        ChangedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
-////        CreatedAt = d(new DateTime(2021, 1, 1), DateTime.Now),
-////        Completeness = c(1, 100),
-////        Produktname = fd(1, 10, ProductNameList),
-////        Anbieter = "",
-////        BildPath = fe(0, 2, ImagePathList),
-////        Vorlage = fe(0, 2, VorlageList),
-////        Status = fe(0, 2, StatusList)
-////    }
-////));
-
-//                return ProductList;
-//            }
-
-
         }
         /// <summary>
         ///     create a random Number bw 1 to 100

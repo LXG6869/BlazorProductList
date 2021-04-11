@@ -1,6 +1,17 @@
 ﻿@page "/import"
-<h3>Import</h3>
+@using BlazorProductList.Pages.BaseComponent
+@inherits ImportBase
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage;
 
-@code {
+<h3>@CurrentLocation</h3>
 
+@code{
+    public string CurrentLocation { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentLocation = await _localStorage.GetItemAsync<string>("navi");
+        CurrentLocation = CurrentLocation.ToUpper();
+    }
 }
+
+

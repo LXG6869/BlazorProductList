@@ -1,6 +1,7 @@
 ﻿@using Microsoft.Extensions.Logging;
 @inherits LayoutComponentBase
 @inject ILogger<MainLayout> logger;
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage;
 
 <div class="page">
     <div class="sidebar">
@@ -8,9 +9,11 @@
     </div>
 
     <div class="main">
-        <div class="top-row px-4">
 
-            <div class="notification" >
+        <div class="top-row px-4">
+            Hello @userName &nbsp;
+            <span class="iconify" data-icon="el:picture" data-height="28" data-inline="false"></span>
+            <div class="notification">
                 <button type="button" @onclick="GoToEmail" style="border:none;">
                     <span class="iconify" data-icon="ant-design:mail-outlined" data-height="28" data-inline="false">
                     </span>
@@ -22,25 +25,37 @@
                 <button type="button" @onclick="GoToInfo" style="border:none;">
                     <span class="iconify" data-icon="bx:bx-bell" data-height="28" data-inline="false">
                     </span>  <span class="badge-orange badge">3</span>
-                    </button>
+                </button>
             </div>
             <div class="notification">
                 <button type="button" @onclick="GoToRefresh" style="border:none;">
                     <span class="iconify" data-icon="zmdi:refresh" data-height="28" data-inline="false">
 
                     </span>  <span class="badge-orange badge">6</span>
-                    </button>
+                </button>
+            </div>
+            <div>
+                <button type="button" @onclick="Setting" style="border:none;">
+                    <span class="iconify" data-icon="uil:setting" data-height="28" data-inline="false"></span>
+                </button>
             </div>
 
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
-
         <div class="content px-4">
             @Body
         </div>
     </div>
 </div>
 @code{
+
+
+    public string userName { get; set; } = "Admin";
+    public string currentNavi { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        var result =await _localStorage.GetItemAsync<string>("navi");
+    }
 
     public void GoToEmail()
     {
@@ -56,5 +71,9 @@
     {
         logger.LogInformation("Click icon go to Refresh View");
 
+    }
+    public void Setting()
+    {
+        logger.LogInformation("Click icon go to Setting View");
     }
 }

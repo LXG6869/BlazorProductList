@@ -1,16 +1,17 @@
 ﻿@page "/"
-@page "/fetchdata"
+@page "/fetchdata/"
 
 @using BlazorProductList.Data
-@using BlazorProductList.Data.Model 
+@using BlazorProductList.Data.Model
 @using BlazorProductList.Data.Service
 @using System.Web
 @using Microsoft.Extensions.Logging;
-@inject ILogger<FetchData> logger; 
+@inject ILogger<FetchData> logger;
 
 @inject WeatherForecastService ForecastService
-@inject ProductService ps 
+@inject ProductService ps
 @inject NavigationManager navi
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage;
 @*@inject HttpClient Http*@
 
 
@@ -18,115 +19,148 @@
     <div class="col-md-2">
         <h3>Produkte List</h3>
     </div>
-    <div class="col-md-10" float-right>
+    <div class="col-md-3">
         <div class="row">
-            <div class="col-md-8"></div>
-            <div class="col-md-2">
-          
+            <div class="col-md-1">
+                <span class="iconify" data-icon="bx:bx-search" data-height="28" data-inline="false"></span>
+            </div>
+            <div class="col-md-11">
+                <input id="searchDetails" type="text" class="form-control" value="@search"
+                       @oninput="UpdateProductList" />
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7" float-right>
+        <div class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-3">
                 <CustomerSelect @bind-OptionList="ansichtOptionList1"></CustomerSelect>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <CustomerSelect @bind-OptionList="ansichtOptionList2"></CustomerSelect>
             </div>
+            <div class="col-md-1">
+                <button type="button" class="btn" data-toggle="tooltip" data-placement="bottom" title="Hinzufügen">
+                    <span class="iconify" data-icon="ant-design:plus-outlined" data-inline="false"></span>
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
 
 
-@if (ProductListShow == null)
+
+@if (ProductList.Count() == 0)
 {
-    <p><em>Loading...</em></p>
+    <div>Loading...</div>
 }
 else
 {
-<div class="row">
-    <div class="col-md-1">1</div>
-    <div class="col-md-11">
-        <table class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th>Bild</th>
-                    <th>Identifizierer</th>
-                    <th>Status</th>
-                    <th>Vollständigkeit</th>
-                    <th>Vorlage</th>
-                    <th>Anbieter</th>
-                    <th>Produktname</th>
-                    <th>Geändert am</th>
-                    <th>Erzeugt am</th>
+    <div class="row">
+        <div class="col-md-1">
+            <div class="row">
+                <div class="col-md-10">
+                    Filter
+                </div>
+                <div class="colo-md-2">
+                    <span class="iconify" data-icon="ant-design:plus-outlined" data-inline="false"></span>
+                </div>
+            </div>
 
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var product in ProductListShow)
-                {
-                    <tr @ondblclick="()=>dbClickEvent(product)">
-                        <td>
-                            <img src="@product.BildPath" style="width:50px; height:50px;" />
-                        </td>
-                        <td>@product.Identifizierer</td>
-                        <td>
-                            <div class="@setStatusIconCss(product)" style="width:120px;">
-                                <span class="iconify" data-icon="@setStatusIcon(product)" data-inline="false"></span>@product.Status
-                            </div>
-                        </td>
-                        <td style="text-align:-webkit-center;">
-                            @{
-                                int completness = product.Completeness < 0 ? 0 : product.Completeness;
-                            }
-                            @*dirct when and switch key words not using functions in html*@
-                            @*<div class="@changeCssClass(product)" style="text-align:center;width:50px;">*@
-                            <div class="@(completness switch { _ when completness>90=>"chip chip-green", _ when completness>50=>"chip chip-orange", _ when completness>0=>"chip chip-red" })" style="text-align:center;width:50px;">
-                                <span> @product.Completeness</span>
-                            </div>
-                        </td>
-                        <td>@product.Vorlage</td>
-                        <td>@product.Anbieter</td>
-                        <td>@product.Produktname</td>
-                        <td>@product.ChangedAt.ToShortDateString()</td>
-                        <td>@product.CreatedAt.ToShortDateString()</td>
+            <input type="text" id="searchFiltern" class="form-control" style="font-size:12px;" placeholder="KATEGORIEN" />
+
+
+        </div>
+        <div class="col-md-11">
+            <table class="table table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Bild</th>
+                        <th>Identifizierer</th>
+                        <th>Status</th>
+                        <th>Vollständigkeit</th>
+                        <th>Vorlage</th>
+                        <th>Anbieter</th>
+                        <th>Produktname</th>
+                        <th>Geändert am</th>
+                        <th>Erzeugt am</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var product in ProductListShow)
+                    {
+                        <tr @ondblclick="()=>dbClickEvent(product)">
+                            <td>
+                                <img src="@product.BildPath" style="width:45px; height:45px;" />
+                            </td>
+                            <td>@product.Identifizierer</td>
+                            <td>
+                                <div class="@setStatusIconCss(product)" style="width:120px;">
+                                    <span class="iconify" data-icon="@setStatusIcon(product)" data-inline="false"></span>@product.Status
+                                </div>
+                            </td>
+                            <td style="text-align:-webkit-center;">
+                                @{
+                                    int completness = product.Completeness < 0 ? 0 : product.Completeness;
+                                }
+                                @*dirct when and switch key words not using functions in html*@
+
+                                <div class="@(completness switch { _ when completness>90=>"chip chip-green", _ when completness>50=>"chip chip-orange", _ when completness>0=>"chip chip-red" })" style="text-align:center;width:50px;">
+                                    <span> @product.Completeness</span>
+                                </div>
+                            </td>
+                            <td>@product.Vorlage</td>
+                            <td>@product.Anbieter</td>
+                            <td>@product.Produktname</td>
+                            <td>@product.ChangedAt.ToShortDateString()</td>
+                            <td>@product.CreatedAt.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-1">2</div>
-    <div class="col-md-11">
-        <button type="button" @onclick="GoToBegin" style="border:none;">
-            <span class="iconify" data-icon="line-md:chevron-small-double-left" data-inline="false"></span>
-        </button>
-        <button type="button" @onclick="GoToPrevious" style="border:none;">
-            <span class="iconify" data-icon="line-md:chevron-small-left" data-inline="false"></span>
-        </button>
-        <button type="button" @onclick="GoToNext" style="border:none;">
-            <span class="iconify" data-icon="line-md:chevron-small-right" data-inline="false"></span>
-        </button>
-        <button type="button" @onclick="GoToEnd" style="border:none;">
-            <span class="iconify" data-icon="line-md:chevron-small-double-right" data-inline="false"></span>
-        </button>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-9">
+            <button type="button" @onclick="GoToBegin" style="border:none;">
+                <span class="iconify" data-icon="line-md:chevron-small-double-left" data-inline="false"></span>
+            </button>
+            <button type="button" @onclick="GoToPrevious" style="border:none;">
+                <span class="iconify" data-icon="line-md:chevron-small-left" data-inline="false"></span>
+            </button>
+            @CurrentPage
+            <button type="button" @onclick="GoToNext" style="border:none;">
+                <span class="iconify" data-icon="line-md:chevron-small-right" data-inline="false"></span>
+            </button>
+            <button type="button" @onclick="GoToEnd" style="border:none;">
+                <span class="iconify" data-icon="line-md:chevron-small-double-right" data-inline="false"></span>
+            </button>
+        </div>
+        <div class="col-md-2" style="text-align:right">
+            @((CurrentPage-1)*10+1) - @((CurrentPage-1)*10+ProductListShow.Count()) von @currentAmount
+        </div>
     </div>
-</div>  
 }
 
 @code {
     private WeatherForecast[] forecasts;
-    private IEnumerable<Product> ProductList;
-    private IEnumerable<Product> ProductListShow;
+    private IEnumerable<Product> ProductList; // total Product list from Backend
+    private IEnumerable<Product> ProductListShow; // showed List in View (10 each page)
+    private IEnumerable<Product> ProductListFiltern; // product list after filtern
     public string imagePath;
-
+    public int currentAmount { get; set; }
     public string Name { get; set; }
     public int CurrentPage { get; set; } = 1;
+    public string search { get; set; } = string.Empty;
     public List<string> ansichtOptionList1 { get; set; }
+    private string currentNavigation { get; set; } = "Product List";
 
     public List<string> ansichtOptionList2 { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        //https://localhost:44388/
-        //forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-        //var result= Http.GetStringAsync("https://localhost:44388/api/product/");
         ansichtOptionList1 = new List<string>();
         ansichtOptionList1.Add("StandardAnsicht1");
         ansichtOptionList1.Add("StandardAnsicht2");
@@ -139,20 +173,20 @@ else
         ansichtOptionList2.Add("Speed4Trade4");
 
         ProductList = await ps.GetProductList();
-
+        ProductListFiltern = ProductList;
+        currentAmount = ProductList.Count();
         ProductListShow = ProductList.OrderByDescending(i => i.Id).Take(CurrentPage * 10);
-
-        //ProductList = ProductList.OrderBy(i => i.Id).Take(10);
+        var result = await _localStorage.GetItemAsync<string>("navi");
     }
     public void dbClickEvent(Product p)
     {
         string idStr = p.Id.ToString();
         string naviTo = "productdetails/" + idStr;
-        navi.NavigateTo($"/productdetails/"+p.Id);
+        navi.NavigateTo($"/productdetails/" + p.Id);
     }
     public string changeCssClass(Product p)
     {
-        if (p.Completeness>=90)
+        if (p.Completeness >= 90)
         {
             return "chip chip-green";
         }
@@ -187,23 +221,25 @@ else
 
     public int UpdateCurrentPage(int page)
     {
-        if (page<=1)
+        if (page <= 1) // always in first page
         {
             return 1;
         }
-        if (page>=ProductList.Count()/10)
+
+        int lastPageNumber = (int)Math.Ceiling((decimal)ProductListFiltern.Count() / 10);
+        if (page >= lastPageNumber) // last Page
         {
-            return ProductList.Count() / 10;
+            return lastPageNumber;
         }
         return page;
     }
     public void UpdateProductList(int page)
     {
         CurrentPage = UpdateCurrentPage(page);
-        ProductListShow =CurrentPage>1?
-            ProductList.OrderByDescending(i => i.Id).Skip((CurrentPage-1)*10).Take(10):
-            ProductList.OrderByDescending(i => i.Id).Take(CurrentPage * 10);
 
+        ProductListShow = CurrentPage > 1 ?
+                    ProductListFiltern.OrderByDescending(i => i.Id).Skip((CurrentPage - 1) * 10).Take(10) :
+                    ProductListFiltern.OrderByDescending(i => i.Id).Take(CurrentPage * 10);
     }
     public void GoToBegin()
     {
@@ -222,7 +258,31 @@ else
     }
     public void GoToEnd()
     {
-        CurrentPage = ProductList.Count()/10;
+        CurrentPage = (ProductListFiltern.Count() / 10) + 1;
         UpdateProductList(CurrentPage);
     }
+    public Task UpdateProductList(ChangeEventArgs ev)
+    {
+        search = ev.Value.ToString();
+        if (string.IsNullOrEmpty(search))
+        {
+            ProductListShow = ProductList.OrderByDescending(i => i.Id).Take(1 * 10);
+            ProductListFiltern = ProductList;
+        }
+        else
+        {
+            ProductListFiltern = FilterProductList(ProductList, search);
+        }
+
+        UpdateProductList(CurrentPage);
+        currentAmount = ProductListFiltern.Count();
+
+        return Task.CompletedTask;
+    }
+
+    private IEnumerable<Product> FilterProductList(IEnumerable<Product> list, string term)
+    {
+        return list.Where(p => p.Identifizierer.IndexOf(term) > -1 || p.Produktname.IndexOf(term) > -1);
+    }
+
 }

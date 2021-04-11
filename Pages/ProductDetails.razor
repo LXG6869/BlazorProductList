@@ -1,77 +1,82 @@
 ﻿@page "/productdetails/{p:int}"
+@inject NavigationManager navi
 <h3>@newProduct.Produktname</h3>
+
 
 @using BlazorProductList.Data.Model
 @using BlazorProductList.Data.Service
 @inject ProductService ps
 <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="card" style="width: 100%;">
-                    <img class="card-img-top" src="@newProduct.BildPath" alt="Card image cap">
-                    <div class="card-body">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text" id="inputGroup-sizing-default">Produkt Name</span>
-                            </div>
-                            <input type="text" class="form-control" 
-                                   aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                                   @bind="@newProduct.Produktname">
+    <div class="row">
+        <div class="col">
+            <div class="card" style="width: 100%;">
+                <img class="card-img-top" src="@newProduct.BildPath" alt="Card image cap">
+                <div class="card-body">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Produkt Name</span>
                         </div>
+                        <input type="text" class="form-control"
+                               aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                               @bind="@newProduct.Produktname">
                     </div>
                 </div>
+                <button class="btn"  @onclick="BackToList">
+                    <span  class="iconify" data-icon="si-glyph:backward-page" data-height="28" data-inline="false"></span>
+                </button>
             </div>
-            <div class="col">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Identifizierer</span>
-                    </div>
-                    <input type="text" class="form-control"
-                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                           @bind="@newProduct.Status">
+        </div>
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Identifizierer</span>
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Produkt Vollständigkeit</span>
-                    </div>
-                    <input type="text" class="form-control"
-                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                           @bind="@newProduct.Completeness">
+                <input type="text" class="form-control"
+                       aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                       @bind="@newProduct.Status">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Produkt Vollständigkeit</span>
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Vorlage</span>
-                    </div>
-                    <input type="text" class="form-control"
-                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                           @bind="@newProduct.Vorlage">
+                <input type="text" class="form-control"
+                       aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                       @bind="@newProduct.Completeness">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Vorlage</span>
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Anbieter</span>
-                    </div>
-                    <input type="text" class="form-control"
-                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                           @bind="@newProduct.Anbieter">
+                <input type="text" class="form-control"
+                       aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                       @bind="@newProduct.Vorlage">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Anbieter</span>
                 </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Geändert am</span>
-                    </div>
-                    <input type="text" class="form-control"
-                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                           @bind="@newProduct.ChangedAt">
-                </div>                        <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Erstellt am</span>
-                    </div>
-                    <input type="text" class="form-control"
-                           aria-label="Default" aria-describedby="inputGroup-sizing-default"
-                           @bind="@newProduct.CreatedAt">
+                <input type="text" class="form-control"
+                       aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                       @bind="@newProduct.Anbieter">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Geändert am</span>
                 </div>
+                <input type="text" class="form-control"
+                       aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                       @bind="@newProduct.ChangedAt">
+            </div>                        <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Erstellt am</span>
+                </div>
+                <input type="text" class="form-control"
+                       aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                       @bind="@newProduct.CreatedAt">
             </div>
         </div>
     </div>
+</div>
 
 
 
@@ -84,8 +89,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-         newProduct = await ps.GetProductDetails(p);
+        newProduct = await ps.GetProductDetails(p);
 
+    }
+    public void BackToList()
+    {
+        navi.NavigateTo("/fetchdata");
     }
 
 }
